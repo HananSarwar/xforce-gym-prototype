@@ -6,6 +6,7 @@
 <title>Xforce Gym, Bahria Town Lahore</title>
 <meta name="description" content="Xforce Gym, Bahria Town Lahore. Open 24 hours Monday to Saturday. State-of-the-art equipment, certified trainers, ladies timing 11 am to 3 pm.">
 <meta name="theme-color" content="#000000">
+<script>document.documentElement.classList.add('js')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -132,8 +133,8 @@ h2.d{font-size:clamp(52px,8vw,112px)}
 .lead{color:#bdbdbd;max-width:34em;margin-top:18px;font-size:18px}
 
 /* reveal: clip wipe */
-.rv{clip-path:inset(0 0 100% 0);transform:translateY(30px);transition:clip-path 1s var(--out),transform 1s var(--out)}
-.rv.in{clip-path:inset(0 0 -10% 0);transform:none}
+.js .rv{opacity:0;transform:translateY(46px) skewY(2deg);transition:opacity .8s var(--out),transform 1s var(--out)}
+.js .rv.in{opacity:1;transform:none}
 .rv-d1{transition-delay:.08s}.rv-d2{transition-delay:.16s}.rv-d3{transition-delay:.24s}
 
 /* services */
@@ -260,7 +261,7 @@ footer.site a:hover{color:#fff}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
-  .rv{clip-path:none;transform:none}
+  .js .rv{opacity:1;transform:none}
   .marquee .track{animation:none}
 }
 </style>
@@ -509,15 +510,18 @@ footer.site a:hover{color:#fff}
   }
 
   /* scroll reveals */
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(en){
-      if(!en.isIntersecting) return;
-      en.target.classList.add('in');
-      countAll(en.target.querySelectorAll('[data-count]'));
-      io.unobserve(en.target);
-    });
-  }, {threshold:.18, rootMargin:'0px 0px -6% 0px'});
-  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+  var rvs = document.querySelectorAll('.rv');
+  function show(el){ el.classList.add('in'); countAll(el.querySelectorAll('[data-count]')); }
+  if (!('IntersectionObserver' in window)) { rvs.forEach(show); }
+  else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(!en.isIntersecting) return;
+        show(en.target); io.unobserve(en.target);
+      });
+    }, {threshold:0, rootMargin:'0px 0px -8% 0px'});
+    rvs.forEach(function(el){ io.observe(el); });
+  }
 
   /* neon flicker only once visible */
   var neon = document.getElementById('neon');
